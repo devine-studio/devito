@@ -1,4 +1,3 @@
-import { Card, CardContent } from '@/components/ui/card';
 import { Player } from '@/types/game';
 
 interface PlayerCardProps {
@@ -9,29 +8,29 @@ interface PlayerCardProps {
 
 export const PlayerCard = ({ player, showNumber = false, isCorrectPosition }: PlayerCardProps) => {
   return (
-    <Card 
-      className={`game-card w-32 h-40 cursor-grab active:cursor-grabbing transition-all duration-300 ${
-        isCorrectPosition ? 'ring-2 ring-success animate-pulse' : ''
-      } ${showNumber ? 'animate-flip' : ''}`}
+    <div 
+      className={`w-36 h-48 rounded-xl border-2 border-foreground/20 cursor-grab active:cursor-grabbing transition-all duration-200 bg-card/80 backdrop-blur-sm ${
+        isCorrectPosition ? 'ring-4 ring-secondary' : ''
+      } ${showNumber ? 'animate-flip' : ''} hover:shadow-lg`}
     >
-      <CardContent className="p-4 h-full flex flex-col items-center justify-center text-center">
+      <div className="p-4 h-full flex flex-col items-center justify-center text-center">
         <div
-          className="w-16 h-16 rounded-full mb-3 border-4 border-white/20 flex items-center justify-center transition-all duration-300"
+          className="w-20 h-20 rounded-full mb-4 border-3 border-foreground/30 flex items-center justify-center transition-all duration-300 shadow-md"
           style={{ backgroundColor: player.color }}
         >
           {showNumber && (
-            <span className="text-white font-bold text-xl">
+            <span className="font-orbitron font-black text-2xl text-foreground">
               {player.number}
             </span>
           )}
         </div>
-        <h3 className="font-semibold text-sm leading-tight">{player.name}</h3>
+        <h3 className="font-inter font-bold text-lg leading-tight text-foreground mb-2">{player.name}</h3>
         {showNumber && (
-          <div className="mt-2 text-xs text-muted-foreground">
-            Número: {player.number}
+          <div className="font-orbitron text-sm text-muted-foreground">
+            #{player.number}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
