@@ -98,11 +98,26 @@ const MemoryOrderGame = () => {
     });
   };
 
+  const startNewGameWithSamePlayers = () => {
+    setGameState(prev => ({
+      ...prev,
+      theme: '',
+      currentPhase: 'setup',
+      currentPlayerIndex: 0,
+      revealedNumbers: [],
+      cardsOrder: [],
+      gameWon: null,
+    }));
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-6xl">
         {gameState.currentPhase === 'setup' && (
-          <GameSetup onStartGame={startGame} />
+          <GameSetup 
+            onStartGame={startGame} 
+            existingPlayers={gameState.players.length > 0 ? gameState.players.map(({ number, ...player }) => player) : undefined}
+          />
         )}
         
         {gameState.currentPhase === 'distribution' && (
@@ -118,6 +133,7 @@ const MemoryOrderGame = () => {
             onUpdateCardsOrder={updateCardsOrder}
             onRevealResult={revealResult}
             onResetGame={resetGame}
+            onNewGameWithSamePlayers={startNewGameWithSamePlayers}
           />
         )}
       </div>

@@ -10,13 +10,15 @@ interface GameAreaProps {
   onUpdateCardsOrder: (newOrder: string[]) => void;
   onRevealResult: () => void;
   onResetGame: () => void;
+  onNewGameWithSamePlayers: () => void;
 }
 
 export const GameArea = ({ 
   gameState, 
   onUpdateCardsOrder, 
   onRevealResult, 
-  onResetGame 
+  onResetGame,
+  onNewGameWithSamePlayers
 }: GameAreaProps) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(null);
 
@@ -41,7 +43,7 @@ export const GameArea = ({
       <Card className="game-card">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl">
-            Tema: <span className="gradient-accent bg-clip-text text-transparent">{gameState.theme}</span>
+            Tema: <span style={{ color: 'hsl(var(--soft-pink))' }}>{gameState.theme}</span>
           </CardTitle>
           <p className="text-muted-foreground">
             {isFinished 
@@ -113,7 +115,7 @@ export const GameArea = ({
           <Button 
             onClick={onRevealResult} 
             size="lg" 
-            className="gradient-primary px-8"
+            className="btn-primary px-8 hover:scale-105 transition-transform"
           >
             <Eye className="w-5 h-5 mr-2" />
             Revelar Resultado
@@ -140,6 +142,14 @@ export const GameArea = ({
             >
               <RotateCcw className="w-5 h-5 mr-2" />
               Novo Jogo
+            </Button>
+            <Button 
+              onClick={onNewGameWithSamePlayers} 
+              size="lg" 
+              className="btn-secondary"
+            >
+              <Trophy className="w-5 h-5 mr-2" />
+              Mesmos Jogadores
             </Button>
           </div>
         )}

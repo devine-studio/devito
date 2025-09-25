@@ -8,49 +8,48 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Main Colors - New Palette */
+    --background: 40 25% 96%; /* Light Beige #f8f6f2 */
+    --foreground: 258 16% 43%; /* Muted Purple #6a5d7b */
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 40 25% 96%;
+    --card-foreground: 258 16% 43%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 40 25% 96%;
+    --popover-foreground: 258 16% 43%;
 
-    --primary: 263 70% 50%;
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 263 70% 65%;
+    --primary: 343 74% 79%; /* Soft Pink #f5a3b0 */
+    --primary-foreground: 40 25% 96%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 162 44% 74%; /* Mint Green #a5dcd0 */
+    --secondary-foreground: 258 16% 43%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 40 25% 93%; /* Very Light Beige #f0ede7 */
+    --muted-foreground: 258 16% 55%; /* Grayish Purple #8a7d9b */
 
-    --accent: 12 76% 61%;
-    --accent-foreground: 0 0% 98%;
-    --accent-glow: 12 76% 75%;
+    --accent: 282 52% 89%; /* Light Purple #e8d7f5 */
+    --accent-foreground: 258 16% 43%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 40 25% 96%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 263 70% 50%;
+    --border: 40 17% 88%; /* Light Gray #e8e4dc */
+    --input: 40 25% 93%;
+    --ring: 343 74% 79%;
 
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 98%;
+    --success: 162 44% 74%;
+    --success-foreground: 258 16% 43%;
 
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 98%;
+    --warning-foreground: 40 25% 96%;
 
-    /* Game specific colors */
-    --game-bg: linear-gradient(135deg, hsl(240 10% 3.9%) 0%, hsl(240 5% 6%) 100%);
-    --card-shadow: 0 10px 30px -12px hsl(263 70% 50% / 0.4);
-    --card-shadow-hover: 0 20px 40px -12px hsl(263 70% 50% / 0.6);
-    --gradient-primary: linear-gradient(135deg, hsl(263 70% 50%) 0%, hsl(263 70% 65%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(12 76% 61%) 0%, hsl(12 76% 75%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(142 76% 50%) 100%);
+    /* Game specific colors - Updated */
+    --game-bg: linear-gradient(135deg, hsl(40 25% 96%) 0%, hsl(40 25% 93%) 100%);
+    --card-shadow: 0 8px 25px -8px hsl(343 74% 79% / 0.15);
+    --card-shadow-hover: 0 15px 35px -8px hsl(343 74% 79% / 0.25);
+    --soft-pink: 343 74% 79%;
+    --mint-green: 162 44% 74%;
+    --light-purple: 282 52% 89%;
     
     --radius: 1rem;
 
@@ -119,13 +118,14 @@ All colors MUST be HSL.
     background: var(--game-bg);
     @apply text-foreground;
     min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
 @layer components {
   .game-card {
-    @apply rounded-xl border border-border/50 backdrop-blur-sm;
-    background: hsl(var(--card) / 0.8);
+    @apply rounded-xl border border-border/30;
+    background: hsl(var(--card));
     box-shadow: var(--card-shadow);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -135,16 +135,30 @@ All colors MUST be HSL.
     transform: translateY(-2px);
   }
 
-  .gradient-primary {
-    background: var(--gradient-primary);
+  .btn-primary {
+    background: hsl(var(--soft-pink));
+    color: hsl(var(--background));
+    border: none;
   }
 
-  .gradient-accent {
-    background: var(--gradient-accent);
+  .btn-primary:hover {
+    background: hsl(var(--soft-pink) / 0.9);
   }
 
-  .gradient-success {
-    background: var(--gradient-success);
+  .btn-secondary {
+    background: hsl(var(--mint-green));
+    color: hsl(var(--foreground));
+    border: none;
+  }
+
+  .btn-secondary:hover {
+    background: hsl(var(--mint-green) / 0.9);
+  }
+
+  .btn-accent {
+    background: hsl(var(--light-purple));
+    color: hsl(var(--foreground));
+    border: none;
   }
 
   .animate-bounce-in {

@@ -3,20 +3,36 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Minus, Play } from 'lucide-react';
+import { Plus, Minus, Play, Lightbulb } from 'lucide-react';
 import { Player, PLAYER_COLORS } from '@/types/game';
 import { toast } from '@/hooks/use-toast';
 
 interface GameSetupProps {
   onStartGame: (theme: string, players: Player[]) => void;
+  existingPlayers?: Omit<Player, 'number'>[];
 }
 
-export const GameSetup = ({ onStartGame }: GameSetupProps) => {
+const THEME_SUGGESTIONS = [
+  'Salgadinhos gostosos',
+  'Super heróis mais picas', 
+  'Desenhos animados mais legais',
+  'Países do mundo',
+  'Frutas tropicais',
+  'Carros esportivos',
+  'Filmes de terror',
+  'Comidas japonesas',
+  'Animais fofos',
+  'Bandas de rock'
+];
+
+export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
   const [theme, setTheme] = useState('');
-  const [players, setPlayers] = useState<Omit<Player, 'number'>[]>([
-    { id: '1', name: '', color: PLAYER_COLORS[0] },
-    { id: '2', name: '', color: PLAYER_COLORS[1] },
-  ]);
+  const [players, setPlayers] = useState<Omit<Player, 'number'>[]>(
+    existingPlayers || [
+      { id: '1', name: '', color: PLAYER_COLORS[0] },
+      { id: '2', name: '', color: PLAYER_COLORS[1] },
+    ]
+  );
 
   const addPlayer = () => {
     if (players.length < 8) {
@@ -70,15 +86,15 @@ export const GameSetup = ({ onStartGame }: GameSetupProps) => {
     <div className="animate-slide-up">
       <Card className="game-card max-w-2xl mx-auto">
         <CardHeader className="text-center">
-          <CardTitle className="text-4xl font-bold gradient-primary bg-clip-text text-transparent">
+          <CardTitle className="text-4xl font-bold" style={{ color: 'hsl(var(--soft-pink))' }}>
             Jogo da Memória Sequencial
           </CardTitle>
           <p className="text-muted-foreground mt-2">
-            Configure o tema e os jogadores para começar
+            {existingPlayers ? 'Escolha um novo tema para a próxima partida' : 'Configure o tema e os jogadores para começar'}
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-2">
+          <div className="space-y-4">
             <Label htmlFor="theme" className="text-lg">Tema do Jogo</Label>
             <Input
               id="theme"
@@ -87,6 +103,26 @@ export const GameSetup = ({ onStartGame }: GameSetupProps) => {
               onChange={(e) => setTheme(e.target.value)}
               className="text-lg p-3"
             />
+            
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Lightbulb className="w-4 h-4" />
+                <span>Sugestões de temas:</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {THEME_SUGGESTIONS.map((suggestion) => (
+                  <Button
+                    key={suggestion}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setTheme(suggestion)}
+                    className="text-xs"
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -139,10 +175,10 @@ export const GameSetup = ({ onStartGame }: GameSetupProps) => {
           <Button
             onClick={handleStart}
             size="lg"
-            className="w-full gradient-primary text-lg py-6"
+            className="w-full btn-primary text-lg py-6 hover:scale-105 transition-transform"
           >
             <Play className="w-5 h-5 mr-2" />
-            Começar Jogo
+            {existingPlayers ? 'Nova Partida' : 'Começar Jogo'}
           </Button>
         </CardContent>
       </Card>
