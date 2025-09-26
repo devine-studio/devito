@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Minus, Play, Lightbulb } from 'lucide-react';
-import { Player, PLAYER_COLORS } from '@/types/game';
 import { toast } from '@/hooks/use-toast';
+import { Player, PLAYER_COLORS } from '@/types/game';
+import { Lightbulb, Minus, Play, Plus } from 'lucide-react';
+import { useState } from 'react';
 
 interface GameSetupProps {
   onStartGame: (theme: string, players: Player[]) => void;
@@ -36,12 +35,15 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
 
   const addPlayer = () => {
     if (players.length < 8) {
+      const usedColors = players.map(p => p.color);
+      const availableColor = PLAYER_COLORS.find(color => !usedColors.includes(color)) || PLAYER_COLORS[0];
+      
       setPlayers([
         ...players,
         {
           id: Date.now().toString(),
           name: '',
-          color: PLAYER_COLORS[players.length],
+          color: availableColor,
         },
       ]);
     }
@@ -57,6 +59,27 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
     setPlayers(players.map(p => 
       p.id === id ? { ...p, [field]: value } : p
     ));
+  };
+
+  const updatePlayerColor = (playerId: string, newColor: string) => {
+    const colorInUse = players.some(p => p.id !== playerId && p.color === newColor);
+    if (colorInUse) {
+      toast({
+        title: "Cor já em uso",
+        description: "Esta cor já foi escolhida por outro jogador.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    updatePlayer(playerId, 'color', newColor);
+  };
+
+  const getAvailableColors = (currentPlayerId: string) => {
+    const usedColors = players
+      .filter(p => p.id !== currentPlayerId)
+      .map(p => p.color);
+    return PLAYER_COLORS.filter(color => !usedColors.includes(color));
   };
 
   const handleStart = () => {
@@ -83,22 +106,22 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background flex items-center justify-center p-4 md:p-6">
       <div className="w-full max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-12 animate-slide-up">
-          <h1 className="font-orbitron text-6xl font-black mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            MEMORY SEQUENCE
+        <div className="text-center mb-8 md:mb-12 animate-slide-up">
+          <h1 className="font-orbitron text-4xl md:text-6xl font-black mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            DEVITO
           </h1>
-          <p className="text-lg text-muted-foreground font-inter">
+          <p className="text-base md:text-lg text-muted-foreground font-inter px-4">
             {existingPlayers ? 'Escolha um novo tema para a próxima partida' : 'Configure o tema e os jogadores para começar'}
           </p>
         </div>
 
         {/* Theme Section */}
-        <div className="mb-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-8 border border-border/30">
-            <Label htmlFor="theme" className="text-2xl font-orbitron font-bold text-foreground block mb-4">
+        <div className="mb-8 md:mb-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-8 border border-border/30">
+            <Label htmlFor="theme" className="text-lg md:text-2xl font-orbitron font-bold text-foreground block mb-4">
               TEMA DO JOGO
             </Label>
             <Input
@@ -106,10 +129,10 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
               placeholder="Ex: Animais, Cores, Países..."
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
-              className="text-xl p-4 font-inter bg-background/50 border border-border/50 rounded-xl"
+              className="text-lg md:text-xl p-3 md:p-4 font-inter bg-background/50 border border-border/50 rounded-xl"
             />
             
-            <div className="mt-6">
+            <div className="mt-4 md:mt-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                 <Lightbulb className="w-4 h-4" />
                 <span className="font-inter">Sugestões de temas:</span>
@@ -132,10 +155,10 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
         </div>
 
         {/* Players Section */}
-        <div className="mb-10 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-8 border border-border/30">
+        <div className="mb-8 md:mb-10 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-8 border border-border/30">
             <div className="flex items-center justify-between mb-6">
-              <Label className="text-2xl font-orbitron font-bold text-foreground">
+              <Label className="text-lg md:text-2xl font-orbitron font-bold text-foreground">
                 JOGADORES ({players.length})
               </Label>
               <div className="flex gap-2">
@@ -144,7 +167,7 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
                   size="sm"
                   onClick={removePlayer.bind(null, players[players.length - 1]?.id)}
                   disabled={players.length <= 2}
-                  className="bg-background/30 hover:bg-destructive/20"
+                  className="bg-background/30 hover:bg-destructive/20 p-2 md:px-3"
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
@@ -153,7 +176,7 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
                   size="sm"
                   onClick={addPlayer}
                   disabled={players.length >= 8}
-                  className="bg-background/30 hover:bg-secondary/20"
+                  className="bg-background/30 hover:bg-secondary/20 p-2 md:px-3"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
@@ -162,25 +185,42 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
 
             <div className="grid gap-4">
               {players.map((player, index) => (
-                <div key={player.id} className="flex items-center gap-4 p-4 rounded-xl bg-background/30 border border-border/30">
+                <div key={player.id} className="flex items-center gap-2 md:gap-4 p-3 md:p-4 rounded-xl bg-background/30 border border-border/30">
                   <div
-                    className="w-12 h-12 rounded-full border-2 border-foreground/20 flex items-center justify-center font-orbitron font-bold text-foreground"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-foreground/20 flex items-center justify-center font-orbitron font-bold text-foreground text-sm md:text-base"
                     style={{ backgroundColor: player.color }}
                   >
                     {index + 1}
                   </div>
                   <Input
-                    placeholder={`Nome do Jogador ${index + 1}`}
+                    placeholder={`Jogador ${index + 1}`}
                     value={player.name}
                     onChange={(e) => updatePlayer(player.id, 'name', e.target.value)}
-                    className="flex-1 font-inter bg-background/50 border-border/50"
+                    className="flex-1 font-inter bg-background/50 border-border/50 text-sm md:text-base"
                   />
-                  <input
-                    type="color"
-                    value={player.color}
-                    onChange={(e) => updatePlayer(player.id, 'color', e.target.value)}
-                    className="w-12 h-10 rounded-lg border-2 border-border/50 cursor-pointer"
-                  />
+                  <div className="flex flex-wrap gap-1">
+                    {PLAYER_COLORS.map((color) => {
+                      const isSelected = player.color === color;
+                      const isAvailable = getAvailableColors(player.id).includes(color) || isSelected;
+                      
+                      return (
+                        <button
+                          key={color}
+                          onClick={() => updatePlayerColor(player.id, color)}
+                          disabled={!isAvailable}
+                          className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 transition-all duration-200 ${
+                            isSelected 
+                              ? 'border-foreground scale-110 shadow-lg' 
+                              : isAvailable 
+                                ? 'border-border/50 hover:border-foreground/70 hover:scale-105' 
+                                : 'border-border/30 opacity-50 cursor-not-allowed'
+                          }`}
+                          style={{ backgroundColor: color }}
+                          title={isAvailable ? 'Clique para selecionar' : 'Cor já em uso'}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
               ))}
             </div>
@@ -192,9 +232,9 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
           <Button
             onClick={handleStart}
             size="lg"
-            className="px-12 py-4 text-xl font-orbitron font-bold btn-primary hover:scale-105 transition-all duration-300 shadow-lg"
+            className="w-full max-w-sm px-6 md:px-12 py-4 md:py-6 text-base md:text-xl font-orbitron font-bold bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl"
           >
-            <Play className="w-6 h-6 mr-3" />
+            <Play className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
             {existingPlayers ? 'NOVA PARTIDA' : 'COMEÇAR JOGO'}
           </Button>
         </div>

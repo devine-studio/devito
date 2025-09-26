@@ -22,6 +22,6 @@ export const PLAYER_COLORS = [
   '#FFFFBA', // Amarelo pastel
   '#FFDFBA', // Pêssego pastel
   '#E0BBE4', // Roxo pastel
-  '#FFDAC1', // Coral pastel
+  '#DFD8C8', // Bege pastel
   '#B5EAD7', // Menta pastel
 ];
