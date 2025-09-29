@@ -185,20 +185,22 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
 
             <div className="grid gap-4">
               {players.map((player, index) => (
-                <div key={player.id} className="flex items-center gap-2 md:gap-4 p-3 md:p-4 rounded-xl bg-background/30 border border-border/30">
-                  <div
-                    className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-foreground/20 flex items-center justify-center font-orbitron font-bold text-foreground text-sm md:text-base"
-                    style={{ backgroundColor: player.color }}
-                  >
-                    {index + 1}
+                <div key={player.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 md:p-4 rounded-xl bg-background/30 border border-border/30">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-foreground/20 flex items-center justify-center font-orbitron font-bold text-foreground text-sm md:text-base flex-shrink-0"
+                      style={{ backgroundColor: player.color }}
+                    >
+                      {index + 1}
+                    </div>
+                    <Input
+                      placeholder={`Jogador ${index + 1}`}
+                      value={player.name}
+                      onChange={(e) => updatePlayer(player.id, 'name', e.target.value)}
+                      className="flex-1 font-inter bg-background/50 border-border/50 text-sm md:text-base"
+                    />
                   </div>
-                  <Input
-                    placeholder={`Jogador ${index + 1}`}
-                    value={player.name}
-                    onChange={(e) => updatePlayer(player.id, 'name', e.target.value)}
-                    className="flex-1 font-inter bg-background/50 border-border/50 text-sm md:text-base"
-                  />
-                  <div className="flex flex-wrap gap-1">
+                  <div className="grid grid-cols-6 sm:flex sm:flex-wrap gap-1.5 sm:gap-1 justify-center sm:justify-end">
                     {PLAYER_COLORS.map((color) => {
                       const isSelected = player.color === color;
                       const isAvailable = getAvailableColors(player.id).includes(color) || isSelected;
@@ -208,7 +210,7 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
                           key={color}
                           onClick={() => updatePlayerColor(player.id, color)}
                           disabled={!isAvailable}
-                          className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 transition-all duration-200 ${
+                          className={`w-7 h-7 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full border-2 transition-all duration-200 ${
                             isSelected 
                               ? 'border-foreground scale-110 shadow-lg' 
                               : isAvailable 

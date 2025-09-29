@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { GameState } from '@/types/game';
-import { ChevronLeft, ChevronRight, Eye, RotateCcw, Trophy, X } from 'lucide-react';
-import { useState } from 'react';
+import { Eye, RotateCcw, Trophy, X } from 'lucide-react';
 import { PlayerCard } from './PlayerCard';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 
 interface GameAreaProps {
   gameState: GameState;
@@ -19,17 +19,14 @@ export const GameArea = ({
   onResetGame,
   onNewGameWithSamePlayers
 }: GameAreaProps) => {
-  const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(null);
-
-  const moveCard = (fromIndex: number, toIndex: number) => {
-    if (toIndex < 0 || toIndex >= gameState.cardsOrder.length) return;
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
     
     const items = Array.from(gameState.cardsOrder);
-    const [reorderedItem] = items.splice(fromIndex, 1);
-    items.splice(toIndex, 0, reorderedItem);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
     
     onUpdateCardsOrder(items);
-    setSelectedCardIndex(toIndex);
   };
 
   const isFinished = gameState.currentPhase === 'finished';
@@ -55,60 +52,59 @@ export const GameArea = ({
         {/* Game Board */}
         <div className="mb-8 md:mb-12 animate-slide-up" style={{ animationDelay: '0.1s' }}>
           <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-4 md:p-8 border border-border/30">
-            <div className="flex gap-3 md:gap-6 justify-center flex-wrap">
-              {gameState.cardsOrder.map((playerId, index) => {
-                const player = gameState.players.find(p => p.id === playerId)!;
-                const isCorrectPosition = isFinished && correctOrder[index] === playerId;
-                const isSelected = selectedCardIndex === index;
-                
-                return (
-                  <div key={playerId} className="relative">
-                    <div
-                      className={`transition-all duration-200 cursor-pointer ${
-                        isSelected ? 'transform scale-110' : 'hover:scale-105'
-                      } ${isCorrectPosition ? 'animate-pulse' : ''}`}
-                      onClick={() => !isFinished && setSelectedCardIndex(isSelected ? null : index)}
-                    >
-                      <PlayerCard
-                        player={player}
-                        showNumber={isFinished}
-                        isCorrectPosition={isCorrectPosition}
-                      />
-                      {isSelected && !isFinished && (
-                        <div className="absolute inset-0 border-4 border-primary rounded-xl"></div>
-                      )}
-                    </div>
-                    
-                    {isSelected && !isFinished && (
-                      <div className="absolute -top-12 md:-top-16 left-1/2 transform -translate-x-1/2 flex gap-1 md:gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => moveCard(index, index - 1)}
-                          disabled={index === 0}
-                          className="w-8 h-8 md:w-10 md:h-10 p-0 bg-primary/80 hover:bg-primary/20 border border-border/50"
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="cards" direction="horizontal">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="flex gap-3 md:gap-6 justify-center flex-wrap min-h-[140px] md:min-h-[200px]"
+                  >
+                    {gameState.cardsOrder.map((playerId, index) => {
+                      const player = gameState.players.find(p => p.id === playerId)!;
+                      const isCorrectPosition = isFinished && correctOrder[index] === playerId;
+                      
+                      return (
+                        <Draggable 
+                          key={playerId} 
+                          draggableId={playerId} 
+                          index={index}
+                          isDragDisabled={isFinished}
                         >
-                          <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => moveCard(index, index + 1)}
-                          disabled={index === gameState.cardsOrder.length - 1}
-                          className="w-8 h-8 md:w-10 md:h-10 p-0 bg-primary/80 hover:bg-primary/20 border border-border/50"
-                        >
-                          <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-                        </Button>
-                      </div>
-                    )}
-                    
-                    <div className="text-center mt-2 md:mt-4">
-                      <span className="font-orbitron font-bold text-sm md:text-lg text-foreground bg-background/50 px-2 md:px-3 py-1 rounded-full">
-                        {index + 1}º
-                      </span>
-                    </div>
+                          {(provided, snapshot) => (
+                            <div className="relative">
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`transition-all duration-200 ${
+                                  snapshot.isDragging ? 'transform scale-105 z-50' : 'hover:scale-105'
+                                } ${isCorrectPosition ? 'animate-pulse' : ''} ${
+                                  !isFinished ? 'cursor-grab active:cursor-grabbing' : ''
+                                }`}
+                              >
+                                <PlayerCard
+                                  player={player}
+                                  showNumber={isFinished}
+                                  isCorrectPosition={isCorrectPosition}
+                                />
+                              </div>
+                              
+                              <div className="text-center mt-2 md:mt-4">
+                                <span className="font-orbitron font-bold text-sm md:text-lg text-foreground bg-background/50 px-2 md:px-3 py-1 rounded-full">
+                                  {index + 1}º
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           </div>
         </div>
 
