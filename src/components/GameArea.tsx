@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { GameState } from "@/types/game";
 import { Eye, RotateCcw, Trophy, X } from "lucide-react";
@@ -251,7 +250,6 @@ export const GameArea = ({
           )}
         </div>
 
-        {/* Results */}
         {isFinished && (
           <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
             <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-4 md:p-8 border border-border/30">
