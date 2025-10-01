@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { GameSetup } from './GameSetup';
-import { NumberDistribution } from './NumberDistribution';
-import { GameArea } from './GameArea';
 import { GameState, Player } from '@/types/game';
+import { useState } from 'react';
+import { GameArea } from './GameArea';
+import { GameSetup } from './GameSetup';
+import { HowToPlay } from './HowToPlay';
+import { NumberDistribution } from './NumberDistribution';
 
 const MemoryOrderGame = () => {
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [gameState, setGameState] = useState<GameState>({
     theme: '',
     players: [],
@@ -49,7 +51,6 @@ const MemoryOrderGame = () => {
     const nextPlayerIndex = gameState.currentPlayerIndex + 1;
     
     if (nextPlayerIndex >= gameState.players.length) {
-      // All players have seen their numbers, start the game
       setGameState(prev => ({
         ...prev,
         currentPhase: 'playing',
@@ -72,7 +73,6 @@ const MemoryOrderGame = () => {
   };
 
   const revealResult = () => {
-    // Check if the order is correct
     const correctOrder = [...gameState.players]
       .sort((a, b) => a.number - b.number)
       .map(p => p.id);
@@ -110,31 +110,46 @@ const MemoryOrderGame = () => {
     }));
   };
 
+  const showInstructions = () => {
+    setShowHowToPlay(true);
+  };
+
+  const backToSetup = () => {
+    setShowHowToPlay(false);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-6xl">
-        {gameState.currentPhase === 'setup' && (
-          <GameSetup 
-            onStartGame={startGame} 
-            existingPlayers={gameState.players.length > 0 ? gameState.players.map(({ number, ...player }) => player) : undefined}
-          />
-        )}
-        
-        {gameState.currentPhase === 'distribution' && (
-          <NumberDistribution
-            gameState={gameState}
-            onNumberSeen={markNumberSeen}
-          />
-        )}
-        
-        {(gameState.currentPhase === 'playing' || gameState.currentPhase === 'finished') && (
-          <GameArea
-            gameState={gameState}
-            onUpdateCardsOrder={updateCardsOrder}
-            onRevealResult={revealResult}
-            onResetGame={resetGame}
-            onNewGameWithSamePlayers={startNewGameWithSamePlayers}
-          />
+        {showHowToPlay ? (
+          <HowToPlay onBackToSetup={backToSetup} />
+        ) : (
+          <>
+            {gameState.currentPhase === 'setup' && (
+              <GameSetup 
+                onStartGame={startGame} 
+                onShowInstructions={showInstructions}
+                existingPlayers={gameState.players.length > 0 ? gameState.players.map(({ number, ...player }) => player) : undefined}
+              />
+            )}
+            
+            {gameState.currentPhase === 'distribution' && (
+              <NumberDistribution
+                gameState={gameState}
+                onNumberSeen={markNumberSeen}
+              />
+            )}
+            
+            {(gameState.currentPhase === 'playing' || gameState.currentPhase === 'finished') && (
+              <GameArea
+                gameState={gameState}
+                onUpdateCardsOrder={updateCardsOrder}
+                onRevealResult={revealResult}
+                onResetGame={resetGame}
+                onNewGameWithSamePlayers={startNewGameWithSamePlayers}
+              />
+            )}
+          </>
         )}
       </div>
     </div>

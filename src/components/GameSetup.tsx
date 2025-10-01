@@ -3,11 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Player, PLAYER_COLORS } from "@/types/game";
-import { Dices, Minus, Play, Plus } from "lucide-react";
+import { Dices, HelpCircle, Minus, Play, Plus } from "lucide-react";
 import { useState } from "react";
 
 interface GameSetupProps {
   onStartGame: (theme: string, players: Player[]) => void;
+  onShowInstructions: () => void;
   existingPlayers?: Omit<Player, "number">[];
 }
 
@@ -24,7 +25,7 @@ const THEME_SUGGESTIONS = [
   "Bandas de rock",
 ];
 
-export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
+export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: GameSetupProps) => {
   const [theme, setTheme] = useState("");
   const [players, setPlayers] = useState<Omit<Player, "number">[]>(
     existingPlayers || [
@@ -128,7 +129,7 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
       <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12 animate-slide-up">
-          <h1 className="font-orbitron text-4xl md:text-6xl font-black mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          <h1 className="font-orbitron text-4xl md:text-6xl font-black mb-4 bg-primary bg-clip-text text-transparent">
             DEVITO
           </h1>
           <p className="text-base md:text-lg text-muted-foreground font-inter px-4">
@@ -171,7 +172,6 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
           </div>
         </div>
 
-        {/* Players Section */}
         <div
           className="mb-8 md:mb-10 animate-slide-up"
           style={{ animationDelay: "0.2s" }}
@@ -263,11 +263,22 @@ export const GameSetup = ({ onStartGame, existingPlayers }: GameSetupProps) => {
           </div>
         </div>
 
-        {/* Start Button */}
+        {/* Action Buttons */}
         <div
-          className="text-center animate-slide-up"
+          className="flex flex-col sm:flex-row gap-4 items-center justify-center animate-slide-up"
           style={{ animationDelay: "0.3s" }}
         >
+
+          <Button
+            onClick={onShowInstructions}
+            size="lg"
+            variant="outline"
+            className="w-full max-w-sm px-6 md:px-12 py-4 md:py-6 text-base md:text-xl font-orbitron font-bold bg-background/50 hover:bg-background/50 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl border-border/50"
+          >
+            <HelpCircle className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
+            COMO JOGAR
+          </Button>
+
           <Button
             onClick={handleStart}
             size="lg"

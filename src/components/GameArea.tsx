@@ -1,25 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { GameState } from "@/types/game";
-import { Eye, RotateCcw, Trophy, X } from "lucide-react";
-import { PlayerCard } from "./PlayerCard";
 import {
-  DndContext,
   closestCenter,
+  DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
+  horizontalListSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  horizontalListSortingStrategy,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Eye, RotateCcw, Trophy, X } from "lucide-react";
+import { PlayerCard } from "./PlayerCard";
 
 interface SortableCardProps {
   player: any;
