@@ -5,25 +5,13 @@ import { toast } from "@/hooks/use-toast";
 import { Player, PLAYER_COLORS } from "@/types/game";
 import { Dices, HelpCircle, Minus, Play, Plus } from "lucide-react";
 import { useState } from "react";
+import { THEME_SUGGESTIONS } from "../types/game";
 
 interface GameSetupProps {
   onStartGame: (theme: string, players: Player[]) => void;
   onShowInstructions: () => void;
   existingPlayers?: Omit<Player, "number">[];
 }
-
-const THEME_SUGGESTIONS = [
-  "Salgadinhos gostosos",
-  "Super heróis mais picas",
-  "Desenhos animados mais legais",
-  "Países do mundo",
-  "Frutas tropicais",
-  "Carros esportivos",
-  "Filmes de terror",
-  "Comidas japonesas",
-  "Animais fofos",
-  "Bandas de rock",
-];
 
 export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: GameSetupProps) => {
   const [theme, setTheme] = useState("");
