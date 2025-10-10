@@ -14,6 +14,7 @@ export interface GameState {
   cardsOrder: string[];
   gameWon: boolean | null;
   autoAdvance: boolean;
+  enableTextBox: boolean;
 }
 
 export const PLAYER_COLORS = [

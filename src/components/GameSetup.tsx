@@ -9,7 +9,12 @@ import { useState } from 'react';
 import { THEME_SUGGESTIONS } from '../types/game';
 
 interface GameSetupProps {
-  onStartGame: (theme: string, players: Player[], autoAdvance: boolean) => void;
+  onStartGame: (
+    theme: string,
+    players: Player[],
+    autoAdvance: boolean,
+    enableTextBox: boolean
+  ) => void;
   onShowInstructions: () => void;
   existingPlayers?: Omit<Player, 'number'>[];
 }
@@ -27,6 +32,7 @@ export const GameSetup = ({
     ]
   );
   const [autoAdvance, setAutoAdvance] = useState(false);
+  const [enableTextBox, setEnableTextBox] = useState(false);
 
   const getRandomTheme = () => {
     const availableThemes = THEME_SUGGESTIONS.filter(
@@ -115,7 +121,7 @@ export const GameSetup = ({
       return;
     }
 
-    onStartGame(theme, validPlayers as Player[], autoAdvance);
+    onStartGame(theme, validPlayers as Player[], autoAdvance, enableTextBox);
   };
 
   return (
@@ -276,6 +282,36 @@ export const GameSetup = ({
                 OFF
               </span>
               <Switch checked={autoAdvance} onCheckedChange={setAutoAdvance} />
+              <span className="text-xs md:text-sm font-orbitron text-muted-foreground">
+                ON
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Enable text boxes */}
+        <div
+          className="mb-8 md:mb-10 animate-slide-up"
+          style={{ animationDelay: '0.3s' }}
+        >
+          <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-border/30 flex items-center justify-between">
+            <div>
+              <Label className="text-base md:text-lg font-orbitron font-bold text-foreground block mb-1">
+                Ativar caixa de texto
+              </Label>
+              <p className="text-xs md:text-sm text-muted-foreground font-inter">
+                Permite escrever observações abaixo de cada jogador na fase de
+                organização
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs md:text-sm font-orbitron text-muted-foreground">
+                OFF
+              </span>
+              <Switch
+                checked={enableTextBox}
+                onCheckedChange={setEnableTextBox}
+              />
               <span className="text-xs md:text-sm font-orbitron text-muted-foreground">
                 ON
               </span>

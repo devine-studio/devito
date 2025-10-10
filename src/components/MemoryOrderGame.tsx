@@ -15,13 +15,15 @@ const MemoryOrderGame = () => {
     revealedNumbers: [],
     cardsOrder: [],
     gameWon: null,
-    autoAdvance: false
+    autoAdvance: false,
+    enableTextBox: false
   });
 
   const startGame = (
     theme: string,
     players: Player[],
-    autoAdvance: boolean
+    autoAdvance: boolean,
+    enableTextBox: boolean
   ) => {
     // Generate random numbers for each player
     const usedNumbers = new Set<number>();
@@ -46,7 +48,8 @@ const MemoryOrderGame = () => {
       revealedNumbers: new Array(playersWithNumbers.length).fill(false),
       cardsOrder: playersWithNumbers.map((p) => p.id),
       gameWon: null,
-      autoAdvance
+      autoAdvance,
+      enableTextBox
     });
   };
 
@@ -102,7 +105,8 @@ const MemoryOrderGame = () => {
       revealedNumbers: [],
       cardsOrder: [],
       gameWon: null,
-      autoAdvance: prev.autoAdvance
+      autoAdvance: prev.autoAdvance,
+      enableTextBox: prev.enableTextBox
     }));
   };
 
@@ -115,7 +119,8 @@ const MemoryOrderGame = () => {
       revealedNumbers: [],
       cardsOrder: [],
       gameWon: null,
-      autoAdvance: prev.autoAdvance
+      autoAdvance: prev.autoAdvance,
+      enableTextBox: prev.enableTextBox
     }));
   };
 
@@ -123,6 +128,13 @@ const MemoryOrderGame = () => {
     setGameState((prev) => ({
       ...prev,
       autoAdvance: value
+    }));
+  };
+
+  const setEnableTextBox = (value: boolean) => {
+    setGameState((prev) => ({
+      ...prev,
+      enableTextBox: value
     }));
   };
 
@@ -169,6 +181,7 @@ const MemoryOrderGame = () => {
                 onResetGame={resetGame}
                 onNewGameWithSamePlayers={startNewGameWithSamePlayers}
                 onSetAutoAdvance={setAutoAdvance}
+                onSetEnableTextBox={setEnableTextBox}
               />
             )}
           </>

@@ -97,6 +97,7 @@ interface GameAreaProps {
   onResetGame: () => void;
   onNewGameWithSamePlayers: () => void;
   onSetAutoAdvance: (value: boolean) => void;
+  onSetEnableTextBox: (value: boolean) => void;
 }
 
 export const GameArea = ({
@@ -187,14 +188,24 @@ export const GameArea = ({
                       isFinished && correctOrder[index] === playerId;
 
                     return (
-                      <SortableCard
+                      <div
                         key={playerId}
-                        player={player}
-                        index={index}
-                        isFinished={isFinished}
-                        showNumber={isFinished}
-                        isCorrectPosition={isCorrectPosition}
-                      />
+                        className="flex flex-col items-center"
+                      >
+                        <SortableCard
+                          player={player}
+                          index={index}
+                          isFinished={isFinished}
+                          showNumber={isFinished}
+                          isCorrectPosition={isCorrectPosition}
+                        />
+                        {!isFinished && gameState.enableTextBox && (
+                          <textarea
+                            placeholder="Escreva aqui..."
+                            className="mt-2 w-40 md:w-52 h-16 md:h-20 resize-none rounded-md border border-border/50 bg-background/60 p-2 text-xs md:text-sm font-inter"
+                          />
+                        )}
+                      </div>
                     );
                   })}
                 </div>
