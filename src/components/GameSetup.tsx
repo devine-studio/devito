@@ -125,7 +125,7 @@ export const GameSetup = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background flex items-center justify-center p-4 md:p-6">
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-6">
       <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12 animate-slide-up">
@@ -263,9 +263,9 @@ export const GameSetup = ({
           </div>
         </div>
 
-        {/* Auto-advance setting */}
+        {/* settings */}
         <div
-          className="mb-8 md:mb-10 animate-slide-up"
+          className="mb-8 md:mb-10 animate-slide-up flex flex-col gap-2"
           style={{ animationDelay: '0.25s' }}
         >
           <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-border/30 flex items-center justify-between">
@@ -287,13 +287,7 @@ export const GameSetup = ({
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Enable text boxes */}
-        <div
-          className="mb-8 md:mb-10 animate-slide-up"
-          style={{ animationDelay: '0.3s' }}
-        >
           <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-border/30 flex items-center justify-between">
             <div>
               <Label className="text-base md:text-lg font-orbitron font-bold text-foreground block mb-1">
