@@ -15,21 +15,26 @@ const MemoryOrderGame = () => {
     revealedNumbers: [],
     cardsOrder: [],
     gameWon: null,
+    autoAdvance: false
   });
 
-  const startGame = (theme: string, players: Player[]) => {
+  const startGame = (
+    theme: string,
+    players: Player[],
+    autoAdvance: boolean
+  ) => {
     // Generate random numbers for each player
     const usedNumbers = new Set<number>();
-    const playersWithNumbers = players.map(player => {
+    const playersWithNumbers = players.map((player) => {
       let randomNumber;
       do {
         randomNumber = Math.floor(Math.random() * 100) + 1;
       } while (usedNumbers.has(randomNumber));
       usedNumbers.add(randomNumber);
-      
+
       return {
         ...player,
-        number: randomNumber,
+        number: randomNumber
       };
     });
 
@@ -39,55 +44,57 @@ const MemoryOrderGame = () => {
       currentPhase: 'distribution',
       currentPlayerIndex: 0,
       revealedNumbers: new Array(playersWithNumbers.length).fill(false),
-      cardsOrder: playersWithNumbers.map(p => p.id),
+      cardsOrder: playersWithNumbers.map((p) => p.id),
       gameWon: null,
+      autoAdvance
     });
   };
 
   const markNumberSeen = () => {
     const newRevealedNumbers = [...gameState.revealedNumbers];
     newRevealedNumbers[gameState.currentPlayerIndex] = true;
-    
+
     const nextPlayerIndex = gameState.currentPlayerIndex + 1;
-    
+
     if (nextPlayerIndex >= gameState.players.length) {
-      setGameState(prev => ({
+      setGameState((prev) => ({
         ...prev,
         currentPhase: 'playing',
-        revealedNumbers: newRevealedNumbers,
+        revealedNumbers: newRevealedNumbers
       }));
     } else {
-      setGameState(prev => ({
+      setGameState((prev) => ({
         ...prev,
         currentPlayerIndex: nextPlayerIndex,
-        revealedNumbers: newRevealedNumbers,
+        revealedNumbers: newRevealedNumbers
       }));
     }
   };
 
   const updateCardsOrder = (newOrder: string[]) => {
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
-      cardsOrder: newOrder,
+      cardsOrder: newOrder
     }));
   };
 
   const revealResult = () => {
     const correctOrder = [...gameState.players]
       .sort((a, b) => a.number - b.number)
-      .map(p => p.id);
-    
-    const isCorrect = JSON.stringify(gameState.cardsOrder) === JSON.stringify(correctOrder);
-    
-    setGameState(prev => ({
+      .map((p) => p.id);
+
+    const isCorrect =
+      JSON.stringify(gameState.cardsOrder) === JSON.stringify(correctOrder);
+
+    setGameState((prev) => ({
       ...prev,
       currentPhase: 'finished',
-      gameWon: isCorrect,
+      gameWon: isCorrect
     }));
   };
 
   const resetGame = () => {
-    setGameState({
+    setGameState((prev) => ({
       theme: '',
       players: [],
       currentPhase: 'setup',
@@ -95,11 +102,12 @@ const MemoryOrderGame = () => {
       revealedNumbers: [],
       cardsOrder: [],
       gameWon: null,
-    });
+      autoAdvance: prev.autoAdvance
+    }));
   };
 
   const startNewGameWithSamePlayers = () => {
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       theme: '',
       currentPhase: 'setup',
@@ -107,6 +115,14 @@ const MemoryOrderGame = () => {
       revealedNumbers: [],
       cardsOrder: [],
       gameWon: null,
+      autoAdvance: prev.autoAdvance
+    }));
+  };
+
+  const setAutoAdvance = (value: boolean) => {
+    setGameState((prev) => ({
+      ...prev,
+      autoAdvance: value
     }));
   };
 
@@ -126,27 +142,33 @@ const MemoryOrderGame = () => {
         ) : (
           <>
             {gameState.currentPhase === 'setup' && (
-              <GameSetup 
-                onStartGame={startGame} 
+              <GameSetup
+                onStartGame={startGame}
                 onShowInstructions={showInstructions}
-                existingPlayers={gameState.players.length > 0 ? gameState.players.map(({ number, ...player }) => player) : undefined}
+                existingPlayers={
+                  gameState.players.length > 0
+                    ? gameState.players.map(({ number, ...player }) => player)
+                    : undefined
+                }
               />
             )}
-            
+
             {gameState.currentPhase === 'distribution' && (
               <NumberDistribution
                 gameState={gameState}
                 onNumberSeen={markNumberSeen}
               />
             )}
-            
-            {(gameState.currentPhase === 'playing' || gameState.currentPhase === 'finished') && (
+
+            {(gameState.currentPhase === 'playing' ||
+              gameState.currentPhase === 'finished') && (
               <GameArea
                 gameState={gameState}
                 onUpdateCardsOrder={updateCardsOrder}
                 onRevealResult={revealResult}
                 onResetGame={resetGame}
                 onNewGameWithSamePlayers={startNewGameWithSamePlayers}
+                onSetAutoAdvance={setAutoAdvance}
               />
             )}
           </>

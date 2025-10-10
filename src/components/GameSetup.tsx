@@ -1,26 +1,32 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
-import { Player, PLAYER_COLORS } from "@/types/game";
-import { Dices, HelpCircle, Minus, Play, Plus } from "lucide-react";
-import { useState } from "react";
-import { THEME_SUGGESTIONS } from "../types/game";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { toast } from '@/hooks/use-toast';
+import { Player, PLAYER_COLORS } from '@/types/game';
+import { Dices, HelpCircle, Minus, Play, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { THEME_SUGGESTIONS } from '../types/game';
 
 interface GameSetupProps {
-  onStartGame: (theme: string, players: Player[]) => void;
+  onStartGame: (theme: string, players: Player[], autoAdvance: boolean) => void;
   onShowInstructions: () => void;
-  existingPlayers?: Omit<Player, "number">[];
+  existingPlayers?: Omit<Player, 'number'>[];
 }
 
-export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: GameSetupProps) => {
-  const [theme, setTheme] = useState("");
-  const [players, setPlayers] = useState<Omit<Player, "number">[]>(
+export const GameSetup = ({
+  onStartGame,
+  onShowInstructions,
+  existingPlayers
+}: GameSetupProps) => {
+  const [theme, setTheme] = useState('');
+  const [players, setPlayers] = useState<Omit<Player, 'number'>[]>(
     existingPlayers || [
-      { id: "1", name: "", color: PLAYER_COLORS[0] },
-      { id: "2", name: "", color: PLAYER_COLORS[1] },
+      { id: '1', name: '', color: PLAYER_COLORS[0] },
+      { id: '2', name: '', color: PLAYER_COLORS[1] }
     ]
   );
+  const [autoAdvance, setAutoAdvance] = useState(false);
 
   const getRandomTheme = () => {
     const availableThemes = THEME_SUGGESTIONS.filter(
@@ -43,9 +49,9 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
         ...players,
         {
           id: Date.now().toString(),
-          name: "",
-          color: availableColor,
-        },
+          name: '',
+          color: availableColor
+        }
       ]);
     }
   };
@@ -58,7 +64,7 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
 
   const updatePlayer = (
     id: string,
-    field: keyof Omit<Player, "number">,
+    field: keyof Omit<Player, 'number'>,
     value: string
   ) => {
     setPlayers(
@@ -72,14 +78,14 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
     );
     if (colorInUse) {
       toast({
-        title: "Cor já em uso",
-        description: "Esta cor já foi escolhida por outro jogador.",
-        variant: "destructive",
+        title: 'Cor já em uso',
+        description: 'Esta cor já foi escolhida por outro jogador.',
+        variant: 'destructive'
       });
       return;
     }
 
-    updatePlayer(playerId, "color", newColor);
+    updatePlayer(playerId, 'color', newColor);
   };
 
   const getAvailableColors = (currentPlayerId: string) => {
@@ -92,9 +98,9 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
   const handleStart = () => {
     if (!theme.trim()) {
       toast({
-        title: "Erro",
-        description: "Por favor, insira um tema para o jogo.",
-        variant: "destructive",
+        title: 'Erro',
+        description: 'Por favor, insira um tema para o jogo.',
+        variant: 'destructive'
       });
       return;
     }
@@ -102,14 +108,14 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
     const validPlayers = players.filter((p) => p.name.trim());
     if (validPlayers.length < 2) {
       toast({
-        title: "Erro",
-        description: "O jogo precisa de pelo menos 2 jogadores com nomes.",
-        variant: "destructive",
+        title: 'Erro',
+        description: 'O jogo precisa de pelo menos 2 jogadores com nomes.',
+        variant: 'destructive'
       });
       return;
     }
 
-    onStartGame(theme, validPlayers as Player[]);
+    onStartGame(theme, validPlayers as Player[], autoAdvance);
   };
 
   return (
@@ -122,15 +128,15 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
           </h1>
           <p className="text-base md:text-lg text-muted-foreground font-inter px-4">
             {existingPlayers
-              ? "Escolha um novo tema para a próxima partida"
-              : "Configure o tema e os jogadores para começar"}
+              ? 'Escolha um novo tema para a próxima partida'
+              : 'Configure o tema e os jogadores para começar'}
           </p>
         </div>
 
         {/* Theme Section */}
         <div
           className="mb-8 md:mb-10 animate-slide-up"
-          style={{ animationDelay: "0.1s" }}
+          style={{ animationDelay: '0.1s' }}
         >
           <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-8 border border-border/30">
             <Label
@@ -162,7 +168,7 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
 
         <div
           className="mb-8 md:mb-10 animate-slide-up"
-          style={{ animationDelay: "0.2s" }}
+          style={{ animationDelay: '0.2s' }}
         >
           <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-8 border border-border/30">
             <div className="flex items-center justify-between mb-6">
@@ -211,7 +217,7 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
                       placeholder={`Jogador ${index + 1}`}
                       value={player.name}
                       onChange={(e) =>
-                        updatePlayer(player.id, "name", e.target.value)
+                        updatePlayer(player.id, 'name', e.target.value)
                       }
                       className="flex-1 font-inter bg-background/50 border-border/50 text-sm md:text-base"
                     />
@@ -230,16 +236,16 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
                           disabled={!isAvailable}
                           className={`w-7 h-7 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full border-2 transition-all duration-200 ${
                             isSelected
-                              ? "border-foreground scale-110 shadow-lg"
+                              ? 'border-foreground scale-110 shadow-lg'
                               : isAvailable
-                              ? "border-border/50 hover:border-foreground/70 hover:scale-105"
-                              : "border-border/30 opacity-50 cursor-not-allowed"
+                              ? 'border-border/50 hover:border-foreground/70 hover:scale-105'
+                              : 'border-border/30 opacity-50 cursor-not-allowed'
                           }`}
                           style={{ backgroundColor: color }}
                           title={
                             isAvailable
-                              ? "Clique para selecionar"
-                              : "Cor já em uso"
+                              ? 'Clique para selecionar'
+                              : 'Cor já em uso'
                           }
                         />
                       );
@@ -251,12 +257,37 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
           </div>
         </div>
 
+        {/* Auto-advance setting */}
+        <div
+          className="mb-8 md:mb-10 animate-slide-up"
+          style={{ animationDelay: '0.25s' }}
+        >
+          <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-border/30 flex items-center justify-between">
+            <div>
+              <Label className="text-base md:text-lg font-orbitron font-bold text-foreground block mb-1">
+                Avanço automático
+              </Label>
+              <p className="text-xs md:text-sm text-muted-foreground font-inter">
+                Mostra e confirma o número automaticamente após 5s em cada etapa
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs md:text-sm font-orbitron text-muted-foreground">
+                OFF
+              </span>
+              <Switch checked={autoAdvance} onCheckedChange={setAutoAdvance} />
+              <span className="text-xs md:text-sm font-orbitron text-muted-foreground">
+                ON
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Action Buttons */}
         <div
           className="flex flex-col sm:flex-row gap-4 items-center justify-center animate-slide-up"
-          style={{ animationDelay: "0.3s" }}
+          style={{ animationDelay: '0.3s' }}
         >
-
           <Button
             onClick={onShowInstructions}
             size="lg"
@@ -273,7 +304,7 @@ export const GameSetup = ({ onStartGame, onShowInstructions, existingPlayers }: 
             className="w-full max-w-sm px-6 md:px-12 py-4 md:py-6 text-base md:text-xl font-orbitron font-bold bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl"
           >
             <Play className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
-            {existingPlayers ? "NOVA PARTIDA" : "COMEÇAR JOGO"}
+            {existingPlayers ? 'NOVA PARTIDA' : 'COMEÇAR JOGO'}
           </Button>
         </div>
       </div>

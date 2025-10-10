@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { GameState } from "@/types/game";
+import { Button } from '@/components/ui/button';
+import { GameState } from '@/types/game';
 import {
   closestCenter,
   DndContext,
@@ -8,18 +8,18 @@ import {
   PointerSensor,
   TouchSensor,
   useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+  useSensors
+} from '@dnd-kit/core';
 import {
   arrayMove,
   horizontalListSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { Eye, RotateCcw, Trophy, X } from "lucide-react";
-import { PlayerCard } from "./PlayerCard";
+  useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Eye, RotateCcw, Trophy, X } from 'lucide-react';
+import { PlayerCard } from './PlayerCard';
 
 interface SortableCardProps {
   player: any;
@@ -34,7 +34,7 @@ const SortableCard = ({
   index,
   isFinished,
   showNumber,
-  isCorrectPosition,
+  isCorrectPosition
 }: SortableCardProps) => {
   const {
     attributes,
@@ -42,15 +42,15 @@ const SortableCard = ({
     setNodeRef,
     transform,
     transition,
-    isDragging,
+    isDragging
   } = useSortable({
     id: player.id,
-    disabled: isFinished,
+    disabled: isFinished
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition
   };
 
   return (
@@ -58,7 +58,7 @@ const SortableCard = ({
       ref={setNodeRef}
       style={{
         ...style,
-        touchAction: "none",
+        touchAction: 'none'
       }}
       {...attributes}
       {...listeners}
@@ -67,12 +67,12 @@ const SortableCard = ({
       <div
         className={`transition-all duration-200 select-none ${
           isDragging
-            ? "shadow-2xl opacity-95 rotate-1 scale-105"
-            : "hover:scale-105 hover:shadow-lg"
-        } ${isCorrectPosition ? "animate-pulse" : ""} ${
-          !isFinished ? "cursor-grab active:cursor-grabbing touch-none" : ""
+            ? 'shadow-2xl opacity-95 rotate-1 scale-105'
+            : 'hover:scale-105 hover:shadow-lg'
+        } ${isCorrectPosition ? 'animate-pulse' : ''} ${
+          !isFinished ? 'cursor-grab active:cursor-grabbing touch-none' : ''
         }`}
-        style={{ touchAction: "none" }}
+        style={{ touchAction: 'none' }}
       >
         <PlayerCard
           player={player}
@@ -96,6 +96,7 @@ interface GameAreaProps {
   onRevealResult: () => void;
   onResetGame: () => void;
   onNewGameWithSamePlayers: () => void;
+  onSetAutoAdvance: (value: boolean) => void;
 }
 
 export const GameArea = ({
@@ -104,21 +105,22 @@ export const GameArea = ({
   onRevealResult,
   onResetGame,
   onNewGameWithSamePlayers,
+  onSetAutoAdvance
 }: GameAreaProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
-      },
+        distance: 8
+      }
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
         delay: 250,
-        tolerance: 5,
-      },
+        tolerance: 5
+      }
     }),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+      coordinateGetter: sortableKeyboardCoordinates
     })
   );
 
@@ -133,7 +135,7 @@ export const GameArea = ({
     }
   };
 
-  const isFinished = gameState.currentPhase === "finished";
+  const isFinished = gameState.currentPhase === 'finished';
   const correctOrder = [...gameState.players]
     .sort((a, b) => a.number - b.number)
     .map((p) => p.id);
@@ -152,16 +154,16 @@ export const GameArea = ({
           <p className="text-sm md:text-lg font-inter text-foreground px-4">
             {isFinished
               ? gameState.gameWon
-                ? "🎉 PARABÉNS! VOCÊS VENCERAM!"
-                : "😢 QUE PENA! TENTEM NOVAMENTE!"
-              : "Clique em uma carta e use as setas para organizá-las em ordem crescente"}
+                ? '🎉 PARABÉNS! VOCÊS VENCERAM!'
+                : '😢 QUE PENA! TENTEM NOVAMENTE!'
+              : 'Clique em uma carta e use as setas para organizá-las em ordem crescente'}
           </p>
         </div>
 
         {/* Game Board */}
         <div
           className="mb-8 md:mb-12 animate-slide-up"
-          style={{ animationDelay: "0.1s" }}
+          style={{ animationDelay: '0.1s' }}
         >
           <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-4 md:p-8 border border-border/30">
             <DndContext
@@ -175,7 +177,7 @@ export const GameArea = ({
               >
                 <div
                   className="flex gap-3 md:gap-6 justify-center flex-wrap min-h-[140px] md:min-h-[200px]"
-                  style={{ touchAction: "none" }}
+                  style={{ touchAction: 'none' }}
                 >
                   {gameState.cardsOrder.map((playerId, index) => {
                     const player = gameState.players.find(
@@ -204,7 +206,7 @@ export const GameArea = ({
         {/* Action Buttons */}
         <div
           className="text-center mb-8 md:mb-12 animate-slide-up"
-          style={{ animationDelay: "0.2s" }}
+          style={{ animationDelay: '0.2s' }}
         >
           {!isFinished ? (
             <Button
@@ -251,7 +253,7 @@ export const GameArea = ({
         </div>
 
         {isFinished && (
-          <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
+          <div className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
             <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-4 md:p-8 border border-border/30">
               <h3 className="text-lg md:text-2xl font-orbitron font-bold mb-6 md:mb-8 text-center text-foreground">
                 ORDEM CORRETA:
