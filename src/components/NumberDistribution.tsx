@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
+import { CircularTimer } from '@/components/ui/circular-timer';
 import { GameState } from '@/types/game';
-import { Eye, EyeOff } from 'lucide-react';
+import { Clock, Eye, EyeOff } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface NumberDistributionProps {
@@ -13,8 +14,10 @@ export const NumberDistribution = ({
   onNumberSeen
 }: NumberDistributionProps) => {
   const [numberVisible, setNumberVisible] = useState(false);
+  const [timerActive, setTimerActive] = useState(false);
   const autoAdvance = gameState.autoAdvance;
   const timerRef = useRef<number | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const isLastPlayer =
@@ -29,9 +32,12 @@ export const NumberDistribution = ({
     onNumberSeen();
   }, [onNumberSeen]);
 
-  // Auto-advance timers: 5s to show number, then 5s to confirm
+  // Auto-advance timer: apenas quando o número estiver visível
   useEffect(() => {
-    if (!autoAdvance) return;
+    if (!autoAdvance) {
+      setTimerActive(false);
+      return;
+    }
 
     // Clear any pending timer first
     if (timerRef.current) {
@@ -39,16 +45,17 @@ export const NumberDistribution = ({
       timerRef.current = null;
     }
 
-    if (!numberVisible) {
-      // Wait 5s, then show number
-      timerRef.current = window.setTimeout(() => {
-        setNumberVisible(true);
-      }, 5000);
-    } else {
+    if (numberVisible) {
+      // Só ativar timer quando número estiver visível
+      setTimerActive(true);
+      
       // Number visible: wait 5s, then confirm
       timerRef.current = window.setTimeout(() => {
         confirmSeen();
       }, 5000);
+    } else {
+      // Desativar timer quando número não estiver visível
+      setTimerActive(false);
     }
 
     return () => {
@@ -56,23 +63,50 @@ export const NumberDistribution = ({
         window.clearTimeout(timerRef.current);
         timerRef.current = null;
       }
+      if (!numberVisible) {
+        setTimerActive(false);
+      }
     };
   }, [autoAdvance, numberVisible, gameState.currentPlayerIndex, confirmSeen]);
 
+  // Callbacks para o timer
+  const handleTimerComplete = useCallback(() => {
+    confirmSeen();
+  }, [confirmSeen]);
+
+  // Auto-focus no botão quando componente carrega
+  useEffect(() => {
+    if (!numberVisible && buttonRef.current) {
+      // Pequeno delay para garantir que o elemento está renderizado
+      const timeout = setTimeout(() => {
+        buttonRef.current?.focus();
+      }, 100);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [numberVisible, gameState.currentPlayerIndex]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background flex items-center justify-center p-4 md:p-6">
-      <div className="w-full max-w-3xl text-center">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden">
+      <div className="w-full max-w-3xl text-center min-w-0">
         {/* Header */}
-        <div className="mb-8 md:mb-12 animate-slide-up">
-          <h1 className="font-orbitron text-2xl md:text-4xl font-black mb-2 text-foreground">
+        <div className="mb-8 md:mb-12 animate-slide-up space-y-4">
+          <h1 className="font-orbitron text-lg md:text-2xl font-black text-foreground opacity-80">
             TEMA:
           </h1>
-          <h2 className="font-orbitron text-4xl md:text-6xl font-black text-primary mb-6 md:mb-8">
+          <h2 className="font-orbitron text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-primary break-words leading-none mx-auto max-w-full overflow-hidden text-ellipsis">
             {gameState.theme.toUpperCase()}
           </h2>
-          <p className="text-sm md:text-lg font-inter text-muted-foreground px-4">
-            Distribuição dos números secretos
-          </p>
+          <div className="pt-2">
+            <p className="text-sm md:text-lg font-inter text-muted-foreground">
+              Distribuição dos números secretos
+            </p>
+            {autoAdvance && (
+              <p className="text-xs mt-2 text-primary font-medium">
+                ⏱️ Modo automático ativo
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Player Section */}
@@ -80,19 +114,19 @@ export const NumberDistribution = ({
           className="mb-8 md:mb-12 animate-slide-up"
           style={{ animationDelay: '0.1s' }}
         >
-          <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-6 md:p-12 border border-border/30">
-            <div className="flex items-center justify-center gap-4 md:gap-6 mb-6 md:mb-8">
+          <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-4 sm:p-6 md:p-12 border border-border/30">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-6 md:mb-8">
               <div
-                className="w-16 h-16 md:w-24 md:h-24 rounded-full border-4 border-foreground/30 flex items-center justify-center font-orbitron font-black text-lg md:text-2xl text-foreground shadow-lg"
+                className="w-14 h-14 sm:w-16 sm:h-16 md:w-24 md:h-24 rounded-full border-4 border-foreground/30 flex items-center justify-center font-orbitron font-black text-base sm:text-lg md:text-2xl text-foreground shadow-lg flex-shrink-0"
                 style={{ backgroundColor: currentPlayer.color }}
               >
                 {gameState.currentPlayerIndex + 1}
               </div>
-              <div className="text-left">
-                <h3 className="font-orbitron text-xl md:text-3xl font-bold text-foreground mb-2">
+              <div className="text-center sm:text-left min-w-0 flex-1">
+                <h3 className="font-orbitron text-lg sm:text-xl md:text-3xl font-bold text-foreground mb-2 break-words">
                   {currentPlayer.name.toUpperCase()}
                 </h3>
-                <p className="text-sm md:text-lg font-inter text-muted-foreground">
+                <p className="text-xs sm:text-sm md:text-lg font-inter text-muted-foreground">
                   É a sua vez de ver o seu número
                 </p>
               </div>
@@ -100,9 +134,10 @@ export const NumberDistribution = ({
 
             {!numberVisible ? (
               <Button
+                ref={buttonRef}
                 onClick={showNumber}
                 size="lg"
-                className="w-full max-w-sm px-6 md:px-12 py-4 md:py-6 text-base md:text-xl font-orbitron font-bold bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl"
+                className="w-full max-w-sm px-6 md:px-12 py-4 md:py-6 text-base md:text-xl font-orbitron font-bold bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl focus:ring-4 focus:ring-primary/50"
               >
                 <Eye className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
                 VER MEU NÚMERO
@@ -123,14 +158,42 @@ export const NumberDistribution = ({
                   </div>
                 </div>
 
-                <Button
-                  onClick={confirmSeen}
-                  size="lg"
-                  className="w-full max-w-sm px-6 md:px-12 py-4 md:py-6 text-base md:text-xl font-orbitron font-bold bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:scale-105 transition-all duration-300 rounded-xl"
-                >
-                  <EyeOff className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
-                  JÁ VI!
-                </Button>
+                {/* Timer e Botão lado a lado */}
+                <div className="flex items-center justify-center gap-6 md:gap-8">
+                  <Button
+                    onClick={confirmSeen}
+                    size="lg"
+                    className="px-6 md:px-12 py-4 md:py-6 text-base md:text-xl font-orbitron font-bold bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:scale-105 transition-all duration-300 rounded-xl"
+                  >
+                    <EyeOff className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
+                    JÁ VI!
+                  </Button>
+
+                  {/* Timer - só aparece quando auto-advance está ativo */}
+                  {autoAdvance && (
+                    <div className="animate-fade-in">
+                      <CircularTimer
+                        duration={5}
+                        isActive={timerActive}
+                        onComplete={handleTimerComplete}
+                        size={80}
+                        strokeWidth={6}
+                        color="hsl(var(--secondary))"
+                        className={timerActive ? 'animate-timer-pulse' : ''}
+                      >
+                        <div className="text-center">
+                          <div className="font-orbitron text-sm font-bold text-foreground mb-1">
+                            {/* Tempo será mostrado automaticamente pelo CircularTimer */}
+                          </div>
+                          <div className="font-inter text-xs text-muted-foreground">
+                            <Clock className="w-3 h-3 mx-auto mb-1" />
+                            AUTO
+                          </div>
+                        </div>
+                      </CircularTimer>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

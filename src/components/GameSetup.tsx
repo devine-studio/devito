@@ -151,19 +151,19 @@ export const GameSetup = ({
             >
               TEMA DO JOGO
             </Label>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Input
                 id="theme"
                 placeholder="Ex: Animais, Cores, Países..."
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
-                className="text-lg md:text-xl p-3 md:p-4 font-inter bg-background/50 border border-border/50 rounded-xl flex-1"
+                className="text-lg md:text-xl p-3 md:p-4 font-inter bg-background/50 border border-border/50 rounded-xl flex-1 w-full"
               />
               <Button
                 onClick={getRandomTheme}
                 size="lg"
                 variant="outline"
-                className="h-10 px-4 py-3 md:px-6 md:py-4 bg-background/30 hover:bg-primary/20 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105"
+                className="w-full sm:w-auto h-12 sm:h-10 px-4 py-3 md:px-6 md:py-4 bg-background/30 hover:bg-primary/20 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2"
                 title="Clique para sortear um tema aleatório"
               >
                 <Dices className="w-5 h-5 md:w-6 md:h-6" />

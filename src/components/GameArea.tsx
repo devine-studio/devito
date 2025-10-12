@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { GameState } from '@/types/game';
+import { GameState, Player } from '@/types/game';
 import {
   closestCenter,
   DndContext,
@@ -22,7 +22,7 @@ import { Eye, RotateCcw, Trophy, X } from 'lucide-react';
 import { PlayerCard } from './PlayerCard';
 
 interface SortableCardProps {
-  player: any;
+  player: Player;
   index: number;
   isFinished: boolean;
   showNumber: boolean;
@@ -180,6 +180,43 @@ export const GameArea = ({
                   className="flex gap-3 md:gap-6 justify-center flex-wrap min-h-[140px] md:min-h-[200px]"
                   style={{ touchAction: 'none' }}
                 >
+                  <div className="flex flex-col items-center">
+                    <div className="relative flex flex-col items-center">
+                      <div className="transition-all duration-200 select-none">
+                        <div 
+                          className="w-24 h-32 md:w-36 md:h-48 rounded-xl border-2 border-primary/50 bg-primary/10 backdrop-blur-sm opacity-75"
+                        >
+                          <div className="p-2 md:p-4 h-full flex flex-col items-center justify-center text-center">
+                            <div
+                              className="w-14 h-14 md:w-20 md:h-20 rounded-full mb-2 md:mb-4 border-3 border-primary/50 flex items-center justify-center transition-all duration-300 shadow-md bg-primary/20"
+                            >
+                              <span className="font-orbitron font-black text-lg md:text-2xl text-primary">
+                                0
+                              </span>
+                            </div>
+                            <h3 className="font-inter font-bold text-sm md:text-lg leading-tight text-primary/80 mb-1 md:mb-2">INÍCIO</h3>
+                            <div className="font-orbitron text-xs md:text-sm text-primary/60">
+                              #0
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-center mt-2 md:mt-4">
+                        <span className="font-orbitron font-bold text-sm md:text-lg text-primary/80 bg-primary/10 px-2 md:px-3 py-1 rounded-full">
+                          0º
+                        </span>
+                      </div>
+                    </div>
+                    {!isFinished && gameState.enableTextBox && (
+                      <div className="mt-2 w-40 md:w-52 h-16 md:h-20 flex items-center justify-center">
+                        <span className="text-xs md:text-sm text-muted-foreground font-inter italic">
+                          Posição inicial
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
                   {gameState.cardsOrder.map((playerId, index) => {
                     const player = gameState.players.find(
                       (p) => p.id === playerId
@@ -270,6 +307,20 @@ export const GameArea = ({
                 ORDEM CORRETA:
               </h3>
               <div className="flex justify-center gap-3 md:gap-6 flex-wrap">
+                {/* Card fixo 0 na ordem correta */}
+                <div className="text-center">
+                  <div
+                    className="w-12 h-12 md:w-16 md:h-16 rounded-full mx-auto mb-2 md:mb-3 border-2 border-primary/50 flex items-center justify-center font-orbitron font-black text-lg md:text-xl text-primary bg-primary/20"
+                  >
+                    0
+                  </div>
+                  <p className="text-sm md:text-lg font-inter font-bold text-primary">
+                    INÍCIO
+                  </p>
+                  <p className="text-xs md:text-sm font-orbitron text-primary/60">
+                    0º
+                  </p>
+                </div>
                 {correctOrder.map((playerId, index) => {
                   const player = gameState.players.find(
                     (p) => p.id === playerId

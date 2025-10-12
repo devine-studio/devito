@@ -147,7 +147,7 @@ const MemoryOrderGame = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="flex items-center justify-center p-6 py-12">
       <div className="w-full max-w-6xl">
         {showHowToPlay ? (
           <HowToPlay onBackToSetup={backToSetup} />
