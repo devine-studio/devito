@@ -22,13 +22,13 @@ interface GameSetupProps {
 export const GameSetup = ({
   onStartGame,
   onShowInstructions,
-  existingPlayers
+  existingPlayers,
 }: GameSetupProps) => {
   const [theme, setTheme] = useState('');
   const [players, setPlayers] = useState<Omit<Player, 'number'>[]>(
     existingPlayers || [
       { id: '1', name: '', color: PLAYER_COLORS[0] },
-      { id: '2', name: '', color: PLAYER_COLORS[1] }
+      { id: '2', name: '', color: PLAYER_COLORS[1] },
     ]
   );
   const [autoAdvance, setAutoAdvance] = useState(false);
@@ -45,7 +45,7 @@ export const GameSetup = ({
   };
 
   const addPlayer = () => {
-    if (players.length < 8) {
+    if (players.length < 16) {
       const usedColors = players.map((p) => p.color);
       const availableColor =
         PLAYER_COLORS.find((color) => !usedColors.includes(color)) ||
@@ -56,8 +56,8 @@ export const GameSetup = ({
         {
           id: Date.now().toString(),
           name: '',
-          color: availableColor
-        }
+          color: availableColor,
+        },
       ]);
     }
   };
@@ -86,7 +86,7 @@ export const GameSetup = ({
       toast({
         title: 'Cor já em uso',
         description: 'Esta cor já foi escolhida por outro jogador.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return;
     }
@@ -106,7 +106,7 @@ export const GameSetup = ({
       toast({
         title: 'Erro',
         description: 'Por favor, insira um tema para o jogo.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return;
     }
@@ -116,7 +116,7 @@ export const GameSetup = ({
       toast({
         title: 'Erro',
         description: 'O jogo precisa de pelo menos 2 jogadores com nomes.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return;
     }
@@ -198,7 +198,7 @@ export const GameSetup = ({
                   variant="outline"
                   size="sm"
                   onClick={addPlayer}
-                  disabled={players.length >= 8}
+                  disabled={players.length >= 16}
                   className="bg-background/30 hover:bg-secondary/20 p-2 md:px-3"
                 >
                   <Plus className="w-4 h-4" />

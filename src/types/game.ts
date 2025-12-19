@@ -25,7 +25,16 @@ export const PLAYER_COLORS = [
   '#FFDFBA', // Pêssego pastel
   '#E0BBE4', // Roxo pastel
   '#DFD8C8', // Bege pastel
-  '#B5EAD7' // Menta pastel
+  '#B5EAD7', // Menta pastel
+  // Additional 16 colors:
+  '#FFDAC1', // Coral pastel
+  '#CBAACB', // Lilás pastel
+  '#BFD8B8', // Verde claro pastel
+  '#F1E3DD', // Areia pastel
+  '#AED9E0', // Azul céu pastel
+  '#FAF3DD', // Limão pastel
+  '#B8B8FF', // Azul violeta pastel
+  '#D8E2DC', // Rosa pó pastel
 ];
 
 export const THEME_SUGGESTIONS = [
@@ -210,5 +219,5 @@ export const THEME_SUGGESTIONS = [
   'Situações que dão preguiça',
   'Piores modas que já existiram',
   'Coisas de criança anos 2000',
-  'Coisas que nunca funcionam direito'
+  'Coisas que nunca funcionam direito',
 ];
